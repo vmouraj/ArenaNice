@@ -1,15 +1,18 @@
-# Arena da Nice — Bar da Menina
+# Arena Nice — Bar da Menina
 
-Primeira versão mobile do controle simples de contas e vendas do Arena da Nice.
+PWA mobile para controle simples das contas e vendas do Arena Nice.
 
 ## MVP
 - Nova conta por nome do cliente
 - Lançamento de produtos por clique
 - Quantidade com + e −
-- Couvert músico
-- Total da conta
-- Vendas do dia
-- Faturamento do dia
-- Demonstrativo de consumo
+- Cardápio editável
+- Forma de pagamento
+- Visão mensal de vendas
+- Fechamento do dia
+- PWA instalável
 
-Nesta primeira versão os dados são armazenados localmente no navegador. Próxima etapa: persistência em banco e histórico.
+## Identidade visual
+Tema claro com branco predominante, azul Royal como cor principal, amarelo nos destaques e vermelho em pequenos detalhes.
+
+Deploy automático via GitHub + Vercel.
