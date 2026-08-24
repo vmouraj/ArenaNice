@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#1556C0"/><rect x="190" y="58" width="132" height="18" rx="9" fill="#E53935"/><path d="M206 90h100l-14 92h-72z" fill="none" stroke="#FFC107" stroke-width="14" stroke-linejoin="round"/><text x="256" y="302" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="88" font-weight="900" fill="#FFFFFF">ARENA</text><text x="256" y="390" text-anchor="middle" font-family="Georgia,serif" font-size="98" font-style="italic" font-weight="700" fill="#FFC107">Nice</text><rect x="114" y="420" width="284" height="8" rx="4" fill="#E53935"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="108" fill="#FFFFFF"/>
+  <g fill="#E51B23">
+    <rect x="212" y="38" width="88" height="15" rx="4"/>
+    <path d="M220 64h72l-10 77h-52z" fill="none" stroke="#E51B23" stroke-width="10" stroke-linejoin="round"/>
+    <rect x="235" y="69" width="8" height="60" rx="4"/>
+    <rect x="252" y="69" width="8" height="60" rx="4"/>
+    <rect x="269" y="69" width="8" height="60" rx="4"/>
+    <rect x="231" y="146" width="50" height="9" rx="4"/>
+    <path d="M188 85l10 10-10 10-10-10zM324 85l10 10-10 10-10-10z"/>
+  </g>
+  <text x="256" y="278" text-anchor="middle" font-family="Arial Black,Arial,Helvetica,sans-serif" font-size="99" font-weight="900" letter-spacing="-4" fill="#0D2F67">ARENA</text>
+  <text x="256" y="382" text-anchor="middle" font-family="Brush Script MT,Segoe Script,Georgia,cursive" font-size="116" font-style="italic" font-weight="700" fill="#FFB000">Nice</text>
+  <path d="M185 391c70 17 150 8 207-23" fill="none" stroke="#FFB000" stroke-width="9" stroke-linecap="round"/>
+  <g fill="#0D2F67" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" letter-spacing="7">
+    <text x="256" y="452" text-anchor="middle">BAR DA MENINA</text>
+  </g>
+  <rect x="126" y="443" width="25" height="5" rx="2" fill="#E51B23"/>
+  <rect x="361" y="443" width="25" height="5" rx="2" fill="#E51B23"/>
+</svg>
