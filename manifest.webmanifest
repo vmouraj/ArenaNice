@@ -1,12 +1,12 @@
 {
-  "name": "Arena da Nice — Bar da Menina",
-  "short_name": "Arena da Nice",
-  "description": "Controle de contas e vendas do Arena da Nice",
+  "name": "Arena Nice — Bar da Menina",
+  "short_name": "Arena Nice",
+  "description": "Controle de contas e vendas do Arena Nice",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#06111d",
-  "theme_color": "#07111d",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
   "orientation": "portrait-primary",
   "icons": [
     {"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
