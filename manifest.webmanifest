@@ -2,7 +2,7 @@
   "name": "Arena da Nice — Bar da Menina",
   "short_name": "Arena da Nice",
   "description": "Controle de contas e vendas do Arena da Nice",
-  "start_url": "/",
+  "start_url": "/app.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#06111d",
