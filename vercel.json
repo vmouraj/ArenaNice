@@ -1,5 +1,5 @@
 {
-  "rewrites":[{"source":"/","destination":"/app-shell.html"}],
+  "redirects":[{"source":"/","destination":"/app-shell.html","permanent":false}],
   "headers":[
     {"source":"/app-shell.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
     {"source":"/arena-v3.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
