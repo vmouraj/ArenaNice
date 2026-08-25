@@ -1,27 +1,54 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Arena Nice"><link rel="manifest" href="/manifest.webmanifest?v=7"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=7"><title>Arena Nice</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f8fc}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="app" src="/arena-v4.html?v=7" title="Arena Nice"></iframe><script>(function(){try{const stamp=new Date().toISOString();const s=localStorage.getItem('arena-sales');const c=localStorage.getItem('arena-catalog');if(s&&!localStorage.getItem('arena-sales-safety-backup'))localStorage.setItem('arena-sales-safety-backup',s);if(c&&!localStorage.getItem('arena-catalog-safety-backup'))localStorage.setItem('arena-catalog-safety-backup',c);localStorage.setItem('arena-safety-backup-at',stamp)}catch(e){}const f=document.getElementById('app');f.addEventListener('load',()=>{try{const d=f.contentDocument;const sc=d.createElement('script');sc.textContent=`(function(){
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Arena Nice"><link rel="manifest" href="/manifest.webmanifest?v=8"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=8"><title>Arena Nice</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f8fc}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="app" src="/arena-v4.html?v=8" title="Arena Nice"></iframe><script>(function(){try{const stamp=new Date().toISOString();const s=localStorage.getItem('arena-sales');const c=localStorage.getItem('arena-catalog');if(s&&!localStorage.getItem('arena-sales-safety-backup'))localStorage.setItem('arena-sales-safety-backup',s);if(c&&!localStorage.getItem('arena-catalog-safety-backup'))localStorage.setItem('arena-catalog-safety-backup',c);localStorage.setItem('arena-safety-backup-at',stamp)}catch(e){}const f=document.getElementById('app');f.addEventListener('load',()=>{try{const d=f.contentDocument;const sc=d.createElement('script');sc.textContent=`(function(){
+const SUPA='https://yibtlwnxdflogthsnkwt.supabase.co';
+const SUPA_KEY='sb_publishable_pBmN9oa19zwPdUJPf8hpMA_YDfjU-uf';
+const SH={'apikey':SUPA_KEY,'Content-Type':'application/json'};
 try{
   catalog=(catalog||[]).map(p=>({...p,id:p.id||crypto.randomUUID()}));
   sales=(sales||[]).map(s=>({...s,id:s.id||s._supabase_id||crypto.randomUUID()}));
   localStorage.setItem('arena-catalog',JSON.stringify(catalog));
   localStorage.setItem('arena-sales',JSON.stringify(sales));
 }catch(e){}
+function status(t){try{document.getElementById('syncStatus').textContent=t||''}catch(e){}}
 function persistLocal(){
   localStorage.setItem('arena-sales',JSON.stringify(sales));
   localStorage.setItem('arena-catalog',JSON.stringify(catalog));
   renderAll();
-  try{document.getElementById('syncStatus').textContent='Dados salvos neste aparelho';}catch(e){}
+}
+async function sreq(path,opt={}){
+  const r=await fetch(SUPA+'/rest/v1/'+path,{...opt,headers:{...SH,...(opt.headers||{})}});
+  if(!r.ok)throw Error('Supabase '+r.status+': '+await r.text());
+  const txt=await r.text();return txt?JSON.parse(txt):[];
+}
+function dbPay(p){return p==='Pix'?'pix':p==='Débito'?'debit':p==='Crédito'?'credit':p==='Dinheiro'?'cash':null}
+function uiPay(p){return p==='pix'?'Pix':p==='debit'?'Débito':p==='credit'?'Crédito':p==='cash'?'Dinheiro':''}
+async function pushSale(s){
+  await sreq('tabs?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates'},body:JSON.stringify({id:s.id,customer_name:s.name||'Cliente',status:s.status||'open',payment_method:dbPay(s.payment),opened_at:(s.createdAt||today())+'T12:00:00-03:00',closed_at:(s.status==='closed')?((s.createdAt||today())+'T12:00:00-03:00'):null})});
+  await sreq('tab_items?tab_id=eq.'+encodeURIComponent(s.id),{method:'DELETE'});
+  const its=(s.items||[]).filter(i=>Number(i.qty)>0).map(i=>({tab_id:s.id,product_name:i.name,unit_price:Number(i.price||0),quantity:Number(i.qty||0)}));
+  if(its.length)await sreq('tab_items',{method:'POST',body:JSON.stringify(its)});
+}
+async function pullSales(){
+  const tabs=await sreq('tabs?select=id,customer_name,status,payment_method,opened_at,closed_at&order=opened_at.desc');
+  const items=await sreq('tab_items?select=tab_id,product_name,unit_price,quantity');
+  const by={};items.forEach(i=>(by[i.tab_id]??=[]).push({name:i.product_name,price:Number(i.unit_price),qty:Number(i.quantity)}));
+  const remote=tabs.map(t=>({id:t.id,name:t.customer_name,status:t.status,payment:uiPay(t.payment_method),createdAt:String(t.opened_at).slice(0,10),items:by[t.id]||[],total:(by[t.id]||[]).reduce((a,i)=>a+i.price*i.qty,0)}));
+  const merged=new Map();remote.forEach(s=>merged.set(s.id,s));sales.forEach(s=>merged.set(s.id,s));sales=[...merged.values()];persistLocal();
+}
+async function syncNow(){
+  if(!navigator.onLine){status('Dados salvos neste aparelho • sincronização pendente');return}
+  try{status('Sincronizando…');for(const s of sales)await pushSale(s);await pullSales();status('Sincronizado');}
+  catch(e){console.warn(e);status('Dados salvos neste aparelho • sincronização pendente')}
 }
 saveSale=async function(s){
-  const i=sales.findIndex(x=>x.id===s.id);
-  if(i>=0)sales[i]=s;else sales.push(s);
-  persistLocal();
+  const i=sales.findIndex(x=>x.id===s.id);if(i>=0)sales[i]=s;else sales.push(s);
+  persistLocal();status('Salvo neste aparelho');
+  pushSale(s).then(()=>pullSales()).then(()=>status('Sincronizado')).catch(e=>{console.warn(e);status('Dados salvos neste aparelho • sincronização pendente')});
   return true;
 };
-saveOpen=async function(){try{let status=edit?.status||'open',s=buildSale(status);if(status==='closed'&&!selectedPay)throw Error('Escolha a forma de pagamento.');await saveSale(s);account.close()}catch(e){alert(e.message)}};
+saveOpen=async function(){try{let st=edit?.status||'open',s=buildSale(st);if(st==='closed'&&!selectedPay)throw Error('Escolha a forma de pagamento.');await saveSale(s);account.close()}catch(e){alert(e.message)}};
 closeAccount=async function(){try{if(!selectedPay)throw Error('Escolha a forma de pagamento.');let s=buildSale('closed');if(!s.items.length)throw Error('Adicione ao menos um produto.');await saveSale(s);account.close()}catch(e){alert(e.message)}};
-editProduct=async function(id,f,v){let p=catalog.find(x=>String(x.id)===String(id));if(!p)return;if(f==='price')p.price=Number(String(v).replace(',','.'));else p.name=v.trim();persistLocal();renderMenu()};
-deleteProduct=async function(id){catalog=catalog.filter(x=>String(x.id)!==String(id));persistLocal();renderMenu()};
-addProduct=async function(){let n=document.getElementById('newName').value.trim(),p=Number(document.getElementById('newPrice').value.replace(',','.'));if(!n||!Number.isFinite(p))return alert('Confira nome e preço.');catalog.push({id:crypto.randomUUID(),name:n,price:p,cat:cat||'outros'});document.getElementById('newName').value='';document.getElementById('newPrice').value='';persistLocal();renderMenu()};
-setStatus=function(){try{document.getElementById('syncStatus').textContent='Dados salvos neste aparelho';}catch(e){}};
-setStatus();renderAll();
+editProduct=async function(id,f,v){let p=catalog.find(x=>String(x.id)===String(id));if(!p)return;if(f==='price')p.price=Number(String(v).replace(',','.'));else p.name=v.trim();persistLocal();renderMenu();status('Cardápio salvo neste aparelho')};
+deleteProduct=async function(id){catalog=catalog.filter(x=>String(x.id)!==String(id));persistLocal();renderMenu();status('Cardápio salvo neste aparelho')};
+addProduct=async function(){let n=document.getElementById('newName').value.trim(),p=Number(document.getElementById('newPrice').value.replace(',','.'));if(!n||!Number.isFinite(p))return alert('Confira nome e preço.');catalog.push({id:crypto.randomUUID(),name:n,price:p,cat:cat||'outros'});document.getElementById('newName').value='';document.getElementById('newPrice').value='';persistLocal();renderMenu();status('Cardápio salvo neste aparelho')};
+window.addEventListener('online',syncNow);status('Dados protegidos neste aparelho');renderAll();setTimeout(syncNow,1200);setInterval(()=>{if(navigator.onLine)syncNow()},15000);
 })();`;d.body.appendChild(sc)}catch(e){console.error(e)}})})();</script></body></html>
