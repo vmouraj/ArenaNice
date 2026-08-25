@@ -1,9 +1,7 @@
 {
-  "redirects":[{"source":"/","destination":"/app-shell.html","permanent":false}],
+  "redirects":[{"source":"/","destination":"/arena-v4.html","permanent":false}],
   "headers":[
-    {"source":"/app-shell.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
-    {"source":"/arena-v3.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
-    {"source":"/supabase-sync.js","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/arena-v4.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
     {"source":"/sw.js","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
     {"source":"/manifest.webmanifest","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]}
   ]
