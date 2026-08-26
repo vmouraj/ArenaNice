@@ -1,4 +1,4 @@
-const CACHE='arena-nice-runtime-v13';
+const CACHE='arena-nice-runtime-v14';
 const OFFLINE='/app-v6.html';
 
 function transformHtml(html){
@@ -6,7 +6,8 @@ function transformHtml(html){
     .replace('.del{border:0;border-radius:9px;color:var(--red)}', '.del{border:0;border-radius:9px;color:var(--red)}.quietDelete{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:#9AA6B8;font-size:16px;display:none;align-items:center;justify-content:center;margin-left:auto;padding:0}.quietDelete:active{background:#F1F4F8;color:#667085}')
     .replace('<button class="danger" id="deleteBtn" onclick="archiveAccount()" style="display:none">Excluir conta</button>', '<button class="quietDelete" id="deleteBtn" onclick="archiveAccount()" aria-label="Excluir conta" title="Excluir conta">🗑</button>')
     .replace("$('deleteBtn').style.display='block';renderProducts()", "$('deleteBtn').style.display=edit.status==='open'?'inline-flex':'none';renderProducts()")
-    .replace("if(!confirm('Excluir esta conta do sistema?'))return;", "if(!confirm('Excluir esta conta aberta?'))return;");
+    .replace("if(!confirm('Excluir esta conta do sistema?'))return;", "if(!confirm('Excluir esta conta aberta?'))return;")
+    .replace('async function pushSale(s){', "async function pushSale(s){if(s.status==='archived'){await req('tab_items?tab_id=eq.'+encodeURIComponent(s.id),{method:'DELETE'});await req('tabs?id=eq.'+encodeURIComponent(s.id),{method:'DELETE'});return;}");
 }
 
 async function freshHtmlResponse(request,preload){
