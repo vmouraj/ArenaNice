@@ -1,8 +1,7 @@
 {
-  "redirects":[{"source":"/","destination":"/safe-shell.html","permanent":false}],
+  "redirects":[{"source":"/","destination":"/app-v6.html","permanent":false}],
   "headers":[
-    {"source":"/safe-shell.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
-    {"source":"/arena-v4.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
+    {"source":"/app-v6.html","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
     {"source":"/sw.js","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]},
     {"source":"/manifest.webmanifest","headers":[{"key":"Cache-Control","value":"no-store, max-age=0"}]}
   ]
