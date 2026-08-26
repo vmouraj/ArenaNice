@@ -1,29 +1,81 @@
-const CACHE='arena-nice-runtime-v15';
+const CACHE='arena-nice-runtime-v16';
 const OFFLINE='/app-v6.html';
 
 function transformHtml(html){
-  return html
-    .replace('</style>', `.quietDelete{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:#9AA6B8;font-size:16px;display:none;align-items:center;justify-content:center;margin-left:auto;padding:0}.quietDelete:active{background:#F1F4F8;color:#667085}
-/* acabamento visual */
-.app{padding-left:16px;padding-right:16px}.date{width:100%;margin:20px auto 16px;text-align:center;line-height:1.35}.title{margin:8px 0 5px;line-height:1.2}.hint{line-height:1.4;margin-bottom:18px}.section{margin-top:30px}.sectionHead{align-items:center;margin-bottom:13px}.sectionHead h2,.sub{line-height:1.35;letter-spacing:.7px}.summary{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);width:100%;gap:10px}.stat{width:100%;padding:16px;overflow:hidden}.stat strong{font-size:clamp(21px,6vw,27px);white-space:nowrap}.filter{width:100%;margin:20px 0 18px}.filter input{width:100%;max-width:100%}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:10px}.actions button{width:100%;min-width:0}.primary,.secondary,.danger{min-height:52px}.bottom .nav{min-width:0}.cat{min-width:0;padding:8px 4px}.accountCats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0 12px}.accountCat{min-width:0;height:76px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:10px;font-weight:900;padding:7px 3px}.accountCat b{display:block;font-size:22px;margin-bottom:5px}.accountCat.active{background:var(--soft);border-color:#AFC7F4;color:var(--royal)}.productBack{height:42px;border:0;border-radius:11px;background:#EEF2F7;color:var(--royal);font-weight:900;padding:0 14px;margin:4px 0 8px}.products{max-height:none;overflow:visible}
-</style>`)
-    .replace('<button class="danger" id="deleteBtn" onclick="archiveAccount()" style="display:none">Excluir conta</button>', '<button class="quietDelete" id="deleteBtn" onclick="archiveAccount()" aria-label="Excluir conta" title="Excluir conta">🗑</button>')
-    .replace("$('deleteBtn').style.display='block';renderProducts()", "$('deleteBtn').style.display=edit.status==='open'?'inline-flex':'none';selectedCategory=null;renderProducts()")
-    .replace("function renderProducts(){const grouped={};state.products.filter(p=>p.active).forEach(p=>(grouped[p.category]??=[]).push(p));$('products').innerHTML=C.map(c=>{const arr=grouped[c[0]]||[];if(!arr.length)return'';return `<div class=\"group\">${c[1]} ${c[2]}</div>`+arr.map(p=>`<div class=\"prod\"><span><b>${esc(p.name)}</b><small>${money(p.price)}</small></span><div class=\"step\"><button onclick=\"qty('${p.id}',-1)\">−</button><b>${edit.items[p.id]||0}</b><button onclick=\"qty('${p.id}',1)\">＋</button></div></div>`).join('')}).join('');updateTotal()}", `let selectedCategory=null;function renderProducts(){const grouped={};state.products.filter(p=>p.active).forEach(p=>(grouped[p.category]??=[]).push(p));if(!selectedCategory){$('products').innerHTML='<div class="accountCats">'+C.map(c=>'<button class="accountCat" onclick="openAccountCategory(\''+c[0]+'\')"><b>'+c[1]+'</b>'+c[2]+'</button>').join('')+'</div>';updateTotal();return}const c=C.find(x=>x[0]===selectedCategory);const arr=grouped[selectedCategory]||[];$('products').innerHTML='<button class="productBack" onclick="backAccountCategories()">← Categorias</button><div class="group">'+(c?c[1]+' '+c[2]:'PRODUTOS')+'</div>'+ (arr.length?arr.map(p=>'<div class="prod"><span><b>'+esc(p.name)+'</b><small>'+money(p.price)+'</small></span><div class="step"><button onclick="qty(\''+p.id+'\',-1)">−</button><b>'+(edit.items[p.id]||0)+'</b><button onclick="qty(\''+p.id+'\',1)">＋</button></div></div>').join(''):'<div class="empty">Nenhum produto nesta categoria.</div>');updateTotal()}function openAccountCategory(cat){selectedCategory=cat;renderProducts()}function backAccountCategories(){selectedCategory=null;renderProducts()}`)
-    .replace("function newAccount(){edit={id:null,name:'',items:{},payment:'',status:'open'};$('accountTitle').textContent='Nova conta';$('customer').value='';$('customer').disabled=false;$('paymentArea').style.display='none';$('saveBtn').textContent='Abrir conta';$('saveBtn').style.display='block';$('closeBtn').style.display='none';$('deleteBtn').style.display='none';renderProducts();account.showModal()}", "function newAccount(){edit={id:null,name:'',items:{},payment:'',status:'open'};selectedCategory=null;$('accountTitle').textContent='Nova conta';$('customer').value='';$('customer').disabled=false;$('paymentArea').style.display='none';$('saveBtn').textContent='Abrir conta';$('saveBtn').style.display='block';$('closeBtn').style.display='none';$('deleteBtn').style.display='none';renderProducts();account.showModal()}")
-    .replace("function archiveAccount(){if(!edit)return;if(!confirm('Excluir esta conta do sistema?'))return;edit.status='archived';saveSale(edit);account.close()}", "function archiveAccount(){if(!edit)return;if(!confirm('Excluir esta conta aberta?'))return;const id=edit.id;state.sales=state.sales.filter(s=>s.id!==id);state.outbox=state.outbox.filter(x=>!(x.type==='sale'&&x.id===id));saveState();renderAll();account.close();status('Conta excluída');if(navigator.onLine){req('tab_items?tab_id=eq.'+encodeURIComponent(id),{method:'DELETE'}).then(()=>req('tabs?id=eq.'+encodeURIComponent(id),{method:'DELETE'})).then(()=>{status('Sincronizado');return pullRemote()}).catch(e=>{console.warn(e);status('Excluída neste aparelho • sincronização pendente')})}}")
-    .replace("if(!confirm('Excluir esta conta do sistema?'))return;", "if(!confirm('Excluir esta conta aberta?'))return;");
+  const css=`
+<style id="arena-v16-ui">
+.app{padding-left:16px!important;padding-right:16px!important}.date{width:100%;text-align:center!important;margin:20px auto 16px!important;line-height:1.35}.title{margin:8px 0 5px!important;line-height:1.2}.hint{line-height:1.4}.section{margin-top:30px}.sectionHead{align-items:center!important;margin-bottom:13px!important}.summary{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)!important;width:100%;gap:10px}.stat{width:100%;min-width:0;overflow:hidden}.stat strong{font-size:clamp(21px,6vw,27px)!important;white-space:nowrap}.filter,.filter input{width:100%;max-width:100%}.actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:10px}.actions button{width:100%;min-width:0}.quietDelete{width:38px!important;height:38px!important;min-height:38px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:#9AA6B8!important;font-size:16px!important;display:none;align-items:center;justify-content:center;margin-left:auto!important;padding:0!important;grid-column:2}.accountCats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0 12px}.accountCat{position:relative;min-width:0;height:80px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:10px;font-weight:900;padding:7px 3px}.accountCat b{display:block;font-size:23px;margin-bottom:5px}.accountCat.hasConsumption{background:#FFF8DF;border-color:#F0C84F;color:#6E5300}.accountCat .badge{position:absolute;top:7px;right:7px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--yellow);color:#553F00;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900}.consumingTitle{margin:14px 0 7px;color:var(--royal);font-size:10px;font-weight:900;letter-spacing:.6px}.consumingChips{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}.consumingChip{flex:0 0 auto;border:1px solid #F0C84F;background:#FFF8DF;color:#6E5300;border-radius:999px;padding:8px 10px;font-size:11px;font-weight:800}.productBack{height:42px;border:0;border-radius:11px;background:#EEF2F7;color:var(--royal);font-weight:900;padding:0 14px;margin:4px 0 9px}.prod.consumed{background:#EEF4FF;border:1px solid #AFC7F4;border-radius:13px;padding:10px;margin:7px 0}.prod.consumed>span b{color:var(--royal)}.prod .taking{display:inline-block;margin-top:5px;background:var(--yellow);color:#5B4300;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:900}.products{max-height:none!important;overflow:visible!important}
+</style>`;
+  const injected=`
+<script id="arena-v16-flow">
+(function(){
+  let selectedCategory=null;
+  const deletedKey='arena-deleted-sales-v1';
+  const getDeleted=()=>{try{return JSON.parse(localStorage.getItem(deletedKey)||'[]')}catch(e){return[]}};
+  const setDeleted=a=>localStorage.setItem(deletedKey,JSON.stringify([...new Set(a)]));
+
+  function categoryQty(cat){let n=0;state.catalog.forEach((p,i)=>{if(p.active!==false&&p.cat===cat)n+=Number(qty[i]||0)});return n}
+  function consumedItems(){return state.catalog.map((p,i)=>({p,i,q:Number(qty[i]||0)})).filter(x=>x.p.active!==false&&x.q>0)}
+
+  renderProducts=function(){
+    const current=consumedItems();
+    if(!selectedCategory){
+      const chips=current.length?'<div class="consumingTitle">EM CONSUMO</div><div class="consumingChips">'+current.map(x=>'<button class="consumingChip" onclick="openAccountCategory(\''+x.p.cat+'\')">'+x.q+'× '+esc(x.p.name)+'</button>').join('')+'</div>':'';
+      $('products').innerHTML=chips+'<div class="accountCats">'+C.map(c=>{const q=categoryQty(c[0]);return '<button class="accountCat '+(q?'hasConsumption':'')+'" onclick="openAccountCategory(\''+c[0]+'\')"><b>'+c[1]+'</b>'+c[2]+(q?'<span class="badge">'+q+'</span>':'')+'</button>'}).join('')+'</div>';
+      calc();return;
+    }
+    const c=C.find(x=>x[0]===selectedCategory);
+    const arr=state.catalog.map((p,i)=>({p,i,q:Number(qty[i]||0)})).filter(x=>x.p.active!==false&&x.p.cat===selectedCategory).sort((a,b)=>b.q-a.q);
+    $('products').innerHTML='<button class="productBack" onclick="backAccountCategories()">← Categorias</button><div class="group">'+(c?c[1]+' '+c[2]:'PRODUTOS')+'</div>'+(arr.length?arr.map(x=>'<div class="prod '+(x.q?'consumed':'')+'"><span>'+esc(x.p.name)+'<small>'+money(x.p.price)+'</small>'+(x.q?'<span class="taking">EM CONSUMO · '+x.q+'</span>':'')+'</span><div class="step"><button onclick="chg('+x.i+',-1)">−</button><b>'+x.q+'</b><button onclick="chg('+x.i+',1)">+</button></div></div>').join(''):'<div class="empty">Nenhum produto nesta categoria.</div>');
+    calc();
+  };
+  window.openAccountCategory=function(cat){selectedCategory=cat;renderProducts()};
+  window.backAccountCategories=function(){selectedCategory=null;renderProducts()};
+
+  const oldNewAccount=newAccount;
+  newAccount=function(){selectedCategory=null;return oldNewAccount()};
+  const oldOpenAccount=openAccount;
+  openAccount=function(id){selectedCategory=null;const r=oldOpenAccount(id);try{$('deleteBtn').style.display=edit&&edit.status==='open'?'inline-flex':'none'}catch(e){}return r};
+
+  async function deleteRemote(id){
+    await req('tab_items?tab_id=eq.'+encodeURIComponent(id),{method:'DELETE'});
+    await req('tabs?id=eq.'+encodeURIComponent(id),{method:'DELETE'});
+  }
+  async function flushDeleted(){
+    if(!navigator.onLine)return;
+    const ids=getDeleted();if(!ids.length)return;
+    const left=[];for(const id of ids){try{await deleteRemote(id)}catch(e){left.push(id)}}setDeleted(left);
+  }
+  archiveAccount=async function(){
+    if(!edit||!edit.id)return;
+    if(!confirm('Excluir esta comanda inteira?'))return;
+    const id=edit.id;
+    setDeleted([...getDeleted(),id]);
+    state.sales=state.sales.filter(s=>s.id!==id);
+    state.outbox=state.outbox.filter(x=>!(x.type==='sale'&&x.id===id));
+    saveState();renderAll();account.close();status('Comanda excluída');
+    await flushDeleted();
+    if(!getDeleted().includes(id))status('Sincronizado');else status('Excluída neste aparelho • sincronização pendente');
+  };
+
+  const basePull=pullRemote;
+  pullRemote=async function(){
+    await basePull();
+    const deleted=new Set(getDeleted());
+    if(deleted.size){state.sales=state.sales.filter(s=>!deleted.has(s.id));saveState();renderAll()}
+    await flushDeleted();
+  };
+  window.addEventListener('online',flushDeleted);
+  flushDeleted();
+})();
+</script>`;
+  html=html.replace('</head>',css+'</head>');
+  html=html.replace('<button class="danger" id="deleteBtn" onclick="archiveAccount()" style="display:none">Excluir conta</button>','<button class="quietDelete" id="deleteBtn" onclick="archiveAccount()" aria-label="Excluir comanda" title="Excluir comanda">🗑</button>');
+  html=html.replace('</body>',injected+'</body>');
+  return html;
 }
 
-async function freshHtmlResponse(request,preload){
-  const response=preload||await fetch(request,{cache:'no-store'});
-  if(!response||!response.ok)return response;
-  const type=response.headers.get('content-type')||'';
-  if(!type.includes('text/html'))return response;
-  const html=transformHtml(await response.text());
-  const headers=new Headers(response.headers);headers.set('cache-control','no-store');
-  return new Response(html,{status:response.status,statusText:response.statusText,headers});
-}
+async function freshHtmlResponse(request,preload){const response=preload||await fetch(request,{cache:'no-store'});if(!response||!response.ok)return response;const type=response.headers.get('content-type')||'';if(!type.includes('text/html'))return response;const html=transformHtml(await response.text());const headers=new Headers(response.headers);headers.set('cache-control','no-store');return new Response(html,{status:response.status,statusText:response.statusText,headers})}
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(['/manifest.webmanifest','/apple-touch-icon.png'])).catch(()=>{}));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));if(self.registration.navigationPreload){try{await self.registration.navigationPreload.enable()}catch(e){}}await self.clients.claim();const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});for(const client of clients){try{await client.navigate(client.url)}catch(e){}}})())});
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
