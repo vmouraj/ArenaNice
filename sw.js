@@ -1,6 +1,6 @@
-const CACHE='arena-nice-production-v21';
+const CACHE='arena-nice-production-v22';
 const APP='/app-v6.html';
-const STATIC=['/manifest.webmanifest','/apple-touch-icon.png'];
+const STATIC=['/manifest.webmanifest','/apple-touch-icon.png','/catalog-seed-2026-08-30.js'];
 
 const DESIGN_FIX=`<style id="arena-design-fix-v21">
 .lock{position:fixed!important;inset:0!important;z-index:100!important;display:none!important;place-items:center!important;background:var(--bg)!important;padding:22px!important;overflow:auto!important}
@@ -10,14 +10,15 @@ const DESIGN_FIX=`<style id="arena-design-fix-v21">
 .app{width:100%!important;max-width:540px!important;margin:0 auto!important;padding-left:16px!important;padding-right:16px!important}.new{max-width:100%!important}.summary{width:100%!important}.stat{min-width:0!important}.row{max-width:100%!important}.bottom{width:100%!important;max-width:540px!important}.nav{min-width:0!important}.primary,.secondary,.danger,.finish{max-width:100%!important}.checkoutPay{max-width:100%!important}
 @media(max-width:430px){.brand h1{font-size:40px!important}.brand small{font-size:9px!important;letter-spacing:3.2px!important}.app{padding-left:15px!important;padding-right:15px!important}.new{height:56px!important;font-size:16px!important}.stat{min-height:100px!important;padding:15px!important}.stat strong{font-size:24px!important}.row{padding:13px!important}.bottom{padding-left:7px!important;padding-right:7px!important}.nav{height:58px!important;font-size:9px!important}.nav b{font-size:19px!important}}
 </style>`;
-const AUTH_FIX=`<script id="arena-auth-fix-v21">(function(){try{if(!localStorage.getItem('arena-device-pin')&&localStorage.getItem('arena-device-authorized'))localStorage.setItem('arena-device-pin','migrated');const l=document.getElementById('lock');if(l&&localStorage.getItem('arena-device-pin'))l.classList.remove('active')}catch(e){}})();</script>`;
+const AUTH_FIX=`<script id="arena-auth-fix-v21">(function(){try{if(!localStorage.getItem('arena-device-pin')&&localStorage.getItem('arena-device-authorized'))localStorage.setItem('arena-device-pin','migrated');const l=document.getElementById('lock');if(l&&localStorage.getItem('arena-device-pin'))l.classList.remove('active')}catch(e){}})();<\/script>`;
+const CATALOG_LOAD=`<script src="/catalog-seed-2026-08-30.js?v=1"><\/script>`;
 
 async function prepareHtml(response){
   if(!response||!response.ok)return response;
   const type=response.headers.get('content-type')||'';
   if(!type.includes('text/html'))return response;
   let html=await response.text();
-  html=html.replace('</head>',DESIGN_FIX+'</head>').replace('</body>',AUTH_FIX+'</body>');
+  html=html.replace('</head>',DESIGN_FIX+'</head>').replace('</body>',AUTH_FIX+CATALOG_LOAD+'</body>');
   const headers=new Headers(response.headers);headers.set('cache-control','no-store');
   return new Response(html,{status:response.status,statusText:response.statusText,headers});
 }
