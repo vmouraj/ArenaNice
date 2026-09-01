@@ -63,3 +63,39 @@
   status(changed.length?'Cardápio completo atualizado':'Cardápio já atualizado');
   scheduleFlush(80);
 })();
+
+/* Correção isolada de rolagem em Android com viewport escalado. Não altera dados nem lógica do sistema. */
+(function(){
+  function boot(){
+    if(!document.documentElement.classList.contains('arena-mobile-force'))return;
+    if(document.getElementById('arena-android-scroll-fix'))return;
+    const style=document.createElement('style');
+    style.id='arena-android-scroll-fix';
+    style.textContent=`
+      html.arena-mobile-force .app{overflow-y:scroll!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;scrollbar-width:auto!important}
+      html.arena-mobile-force dialog[open]{max-height:38vh!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important}
+      html.arena-mobile-force #account[open],html.arena-mobile-force #menu[open]{padding-bottom:34px!important}
+    `;
+    document.head.appendChild(style);
+    let target=null,lastY=null,moved=false;
+    function getTarget(e){const d=e.target.closest('dialog[open]');return d||document.querySelector('.app')}
+    document.addEventListener('touchstart',function(e){
+      if(e.touches.length!==1)return;
+      if(e.target.closest('input,select,textarea')){target=null;lastY=null;return}
+      target=getTarget(e);lastY=e.touches[0].clientY;moved=false;
+    },{passive:true,capture:true});
+    document.addEventListener('touchmove',function(e){
+      if(!target||lastY===null||e.touches.length!==1)return;
+      const y=e.touches[0].clientY,dy=(lastY-y)/2.45;
+      if(Math.abs(dy)>.5){
+        const max=Math.max(0,target.scrollHeight-target.clientHeight);
+        if(max>0){target.scrollTop=Math.max(0,Math.min(max,target.scrollTop+dy));moved=true;e.preventDefault()}
+        lastY=y;
+      }
+    },{passive:false,capture:true});
+    document.addEventListener('touchend',function(){target=null;lastY=null;moved=false},{passive:true,capture:true});
+    document.addEventListener('touchcancel',function(){target=null;lastY=null;moved=false},{passive:true,capture:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+  setTimeout(boot,300);
+})();
