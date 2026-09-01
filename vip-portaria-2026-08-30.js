@@ -126,7 +126,25 @@
   function rebuildYear(){const old=document.getElementById('arenaYearBlock');if(!old||old.dataset.safe==='1')return;old.dataset.safe='1';const y=currentYear(),head=old.querySelector('.arena-year-head'),summary=old.querySelector('.arena-year-summary'),list=old.querySelector('#arenaYearList');if(head){const select=head.querySelector('#arenaYear');if(select){select.innerHTML='<option value="'+y+'">'+y+'</option>';select.value=y;try{select.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){}}const toggle=document.createElement('button');toggle.type='button';toggle.id='arenaYearToggle';toggle.innerHTML='<span>VISÃO ANUAL '+y+'<small>Toque para ver os meses</small></span><b>⌄</b>';old.insertBefore(toggle,head);head.style.display='none';const content=document.createElement('div');content.id='arenaYearContent';if(summary)content.appendChild(summary);if(list)content.appendChild(list);old.appendChild(content);toggle.addEventListener('click',()=>{old.classList.toggle('arena-open');toggle.querySelector('b').textContent=old.classList.contains('arena-open')?'⌃':'⌄'})}}
   function keepMenuSorted(){const i=document.getElementById('menuItems');if(!i)return;Array.from(i.children).filter(x=>x.classList&&x.classList.contains('manage')).sort((a,b)=>(a.querySelector('input')?.value||'').localeCompare(b.querySelector('input')?.value||'','pt-BR',{sensitivity:'base',numeric:true})).forEach(r=>i.appendChild(r));const a=document.querySelector('#menu .menuAdd');if(a&&a.parentNode&&a.nextElementSibling!==i)a.parentNode.insertBefore(a,i)}
   function reopen(){const a=document.getElementById('accountActions');if(!a)return;document.getElementById('arenaReopen')?.remove();try{if(typeof edit==='undefined'||!edit||edit.status!=='closed')return}catch(e){return}const b=document.createElement('button');b.id='arenaReopen';b.type='button';b.className='secondary arena-reopen';b.textContent='↻ Reabrir conta';b.onclick=function(){if(!edit||edit.status!=='closed')return;if(!confirm('Reabrir esta conta? Ela voltará para Contas abertas com os mesmos itens.'))return;edit.status='open';edit.payment='';const idx=state.sales.findIndex(x=>x.id===edit.id);if(idx>=0)state.sales[idx]=edit;saveState();localChange('sale',edit.id);try{setupAccount('open')}catch(e){}reopen();status('Conta reaberta')};a.appendChild(b)}
-  function wrapOpen(){try{if(window.__arenaOpenWrapped)return;window.__arenaOpenWrapped=true;const oo=openAccount;openAccount=function(id){oo(id);setTimeout(reopen,0)};const nn=newAccount;newAccount=function(){nn();setTimeout(reopen,0)}}catch(e){}}
+  function wrapOpen(){try{if(window.__arenaOpenWrapped)return;window.__arenaOpenWrapped=true;const oo=openAccount;openAccount=function(id){oo(id);setTimeout(reopen,0)};const nn=newAccount;newAccount=function(){nn();setTimeout(reopen,0)}}catch(e){} }
   function boot(){addCss();monthControl();setTimeout(rebuildYear,50);keepMenuSorted();wrapOpen();const i=document.getElementById('menuItems');if(i)new MutationObserver(()=>requestAnimationFrame(keepMenuSorted)).observe(i,{childList:true});setTimeout(()=>{monthControl();rebuildYear();keepMenuSorted()},700)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+
+/* Segurança: exclusão de conta no rodapé, longe do X. Não altera a função de exclusão. */
+(function(){
+  function apply(){
+    const dialog=document.getElementById('account'),del=document.getElementById('topDelete');
+    if(!dialog||!del)return;
+    if(del.parentElement!==dialog)dialog.appendChild(del);
+    del.classList.add('arena-bottom-delete');
+    let st=document.getElementById('arena-bottom-delete-style');
+    if(!st){
+      st=document.createElement('style');st.id='arena-bottom-delete-style';
+      st.textContent=`#account .topActions #topDelete{display:none!important}#account #topDelete.arena-bottom-delete{width:100%!important;height:44px!important;margin:16px 0 4px!important;border:1px solid #F0C7C7!important;border-radius:12px!important;background:#FFF7F7!important;color:#C84D4D!important;font-size:0!important;font-weight:850!important;align-items:center!important;justify-content:center!important}#account #topDelete.arena-bottom-delete::before{content:'🗑  Excluir conta';font-size:11px!important;font-weight:850!important}`;
+      document.head.appendChild(st);
+    }
+  }
+  function boot(){apply();setTimeout(apply,250);setTimeout(apply,800)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
