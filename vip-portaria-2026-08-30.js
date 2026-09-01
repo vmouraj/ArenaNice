@@ -116,6 +116,11 @@
     #arenaYearContent{display:none!important}.arena-year-block.arena-open #arenaYearContent{display:block!important}
     .arena-month-row{width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
     .arena-reopen{height:46px!important;background:#EEF4FF!important;color:#1556C0!important;border:1px solid #B9CBFF!important}
+    .bottom{background:#0D2F67!important;border-top:0!important;box-shadow:0 -8px 24px rgba(13,47,103,.18)!important;padding-top:8px!important}
+    .bottom .nav{background:transparent!important;color:#FFFFFF!important;border-radius:13px!important}
+    .bottom .nav b{color:#FFFFFF!important}
+    .bottom .nav.active{background:transparent!important;color:#FFFFFF!important}
+    .bottom .nav.active b{color:#FFB000!important}
   `;document.head.appendChild(s)}
   function monthControl(){const input=document.getElementById('month'),f=input&&input.parentElement;if(!input||!f)return;let d=document.getElementById('arenaMonthDisplay');if(!d){d=document.createElement('div');d.id='arenaMonthDisplay';d.innerHTML='<span></span><b>▾</b>';f.appendChild(d)}const update=()=>{const sp=d.querySelector('span');if(sp)sp.textContent=monthLabel(input.value)};input.addEventListener('change',update);update()}
   function rebuildYear(){const old=document.getElementById('arenaYearBlock');if(!old||old.dataset.safe==='1')return;old.dataset.safe='1';const y=currentYear(),head=old.querySelector('.arena-year-head'),summary=old.querySelector('.arena-year-summary'),list=old.querySelector('#arenaYearList');if(head){const select=head.querySelector('#arenaYear');if(select){select.innerHTML='<option value="'+y+'">'+y+'</option>';select.value=y;try{select.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){}}const toggle=document.createElement('button');toggle.type='button';toggle.id='arenaYearToggle';toggle.innerHTML='<span>VISÃO ANUAL '+y+'<small>Toque para ver os meses</small></span><b>⌄</b>';old.insertBefore(toggle,head);head.style.display='none';const content=document.createElement('div');content.id='arenaYearContent';if(summary)content.appendChild(summary);if(list)content.appendChild(list);old.appendChild(content);toggle.addEventListener('click',()=>{old.classList.toggle('arena-open');toggle.querySelector('b').textContent=old.classList.contains('arena-open')?'⌃':'⌄'})}}
