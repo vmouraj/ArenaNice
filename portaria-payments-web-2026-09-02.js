@@ -22,3 +22,38 @@
   function boot(){apply();new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});setInterval(apply,1500)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
+
+/* Persistência do cardápio: exclusões e edições não voltam; nomes duplicados ficam apenas uma vez. */
+(function(){
+  const DEL_NAMES='arena-deleted-product-names-v1',DEL_IDS='arena-deleted-product-ids-v1',EDITS='arena-product-edits-v1';
+  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v??f}catch(e){return f}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const getNames=()=>new Set(read(DEL_NAMES,[])),getIds=()=>new Set(read(DEL_IDS,[])),getEdits=()=>read(EDITS,{});
+  function rememberDelete(p){const ns=getNames(),ids=getIds();ns.add(norm(p.name));ids.add(p.id);write(DEL_NAMES,[...ns]);write(DEL_IDS,[...ids])}
+  function forgetName(name){const ns=getNames();ns.delete(norm(name));write(DEL_NAMES,[...ns])}
+  function rememberEdit(p){const e=getEdits();e[p.id]={name:p.name,price:Number(p.price),cat:p.cat||p.category||'outros'};write(EDITS,e)}
+  function enforce(){
+    try{
+      if(typeof state==='undefined'||!state||!Array.isArray(state.catalog))return;
+      const ns=getNames(),ids=getIds(),edits=getEdits();let changed=false;
+      for(const p of state.catalog){
+        const e=edits[p.id];
+        if(e&&p.active!==false&&(p.name!==e.name||Number(p.price)!==Number(e.price)||(p.cat||p.category||'outros')!==e.cat)){p.name=e.name;p.price=Number(e.price);p.cat=e.cat;changed=true;try{enqueue('product',p.id)}catch(_){}}
+        if((ids.has(p.id)||ns.has(norm(p.name)))&&p.active!==false){p.active=false;changed=true;try{enqueue('product',p.id)}catch(_){}}
+      }
+      const seen=new Map();
+      for(const p of state.catalog){if(p.active===false)continue;const k=norm(p.name);if(!k)continue;if(!seen.has(k)){seen.set(k,p);continue}const ids2=getIds();ids2.add(p.id);write(DEL_IDS,[...ids2]);p.active=false;changed=true;try{enqueue('product',p.id)}catch(_){}}
+      if(changed){try{saveState();renderMenuCats();if(document.getElementById('menu')?.open)renderMenu();renderProducts()}catch(_){}}
+    }catch(e){console.warn('catalog persistence',e)}
+  }
+  function wrap(){
+    if(window.__arenaCatalogPersistence)return;window.__arenaCatalogPersistence=true;
+    try{window.deleteProduct=function(id){const p=state.catalog.find(x=>x.id===id);if(!p||!confirm('Remover este produto do cardápio?'))return;rememberDelete(p);p.active=false;saveState();localChange('product',id);renderMenu();enforce()}}catch(_){ }
+    try{const oldEdit=editProduct;window.editProduct=function(id,f,v){oldEdit(id,f,v);const p=state.catalog.find(x=>x.id===id);if(p){forgetName(p.name);rememberEdit(p);enforce()}}}catch(_){ }
+    try{const oldAdd=addProduct;window.addProduct=function(){const n=document.getElementById('newName')?.value?.trim();if(n)forgetName(n);oldAdd();setTimeout(enforce,0)}}catch(_){ }
+    try{const oldPull=pullRemote;window.pullRemote=async function(show=true){const r=await oldPull(show);enforce();return r}}catch(_){ }
+    enforce();setInterval(enforce,2000);window.addEventListener('focus',()=>setTimeout(enforce,100));
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wrap,{once:true});else wrap();
+})();
