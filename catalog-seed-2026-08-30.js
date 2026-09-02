@@ -26,3 +26,6 @@
 
 /* Carrega apenas o layout desktop; no celular não produz nenhuma alteração visual. */
 (function(){if(document.getElementById('arena-desktop-loader'))return;const s=document.createElement('script');s.id='arena-desktop-loader';s.src='/desktop-web-2026-09-02.js?v=1';document.head.appendChild(s)})();
+
+/* Detalhes visuais web da Portaria e formas de pagamento. */
+(function(){if(document.getElementById('arena-portaria-payments-loader'))return;const s=document.createElement('script');s.id='arena-portaria-payments-loader';s.src='/portaria-payments-web-2026-09-02.js?v=1';document.head.appendChild(s)})();
