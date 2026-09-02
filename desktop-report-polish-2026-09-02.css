@@ -1,0 +1,46 @@
+/* Arena Nice — refinamento profissional exclusivo da tela Hoje no desktop */
+@media (min-width:900px) and (hover:hover){
+  #report{max-width:1280px!important;padding-top:28px!important}
+  #report>.title{font-size:30px!important;line-height:1.1!important;letter-spacing:-.7px!important;margin:0 0 5px!important;color:#13284a!important}
+  #report>.hint{font-size:12px!important;color:#8290a6!important;margin-bottom:22px!important}
+  #report>.filter{width:220px!important;margin:0 0 20px!important}
+  #report>.filter input{height:42px!important;border:1px solid #dfe6ef!important;border-radius:10px!important;background:#fff!important;padding:0 12px!important;font-size:12px!important;color:#34445f!important;box-shadow:0 1px 2px rgba(16,35,74,.02)!important}
+
+  #arenaReportDesktopGrid{grid-template-columns:minmax(560px,1.55fr) minmax(390px,.9fr)!important;gap:20px!important;margin-top:0!important;align-items:start!important}
+  .arena-report-panel,.arena-finance-box{border:1px solid #e4eaf2!important;border-radius:14px!important;background:#fff!important;box-shadow:0 6px 20px rgba(25,43,74,.045)!important}
+  .arena-report-panel-head,.arena-finance-title{height:50px!important;display:flex!important;align-items:center!important;padding:0 18px!important;border-bottom:1px solid #edf1f6!important;font-size:11px!important;letter-spacing:.45px!important;color:#263a5a!important}
+  .arena-report-panel-head{justify-content:space-between!important}.arena-report-panel-head small{font-size:10px!important;font-weight:700!important;color:#94a0b1!important;letter-spacing:0!important}
+
+  #arenaClosedPanel #clientReport{background:#fff!important}
+  #arenaClosedPanel .arena-closed-row{grid-template-columns:46px minmax(0,1fr) 72px 92px 18px!important;gap:12px!important;min-height:76px!important;padding:12px 18px!important;border-bottom:1px solid #edf1f6!important;background:#fff!important;transition:background .15s ease!important}
+  #arenaClosedPanel .arena-closed-row:last-child{border-bottom:0!important}#arenaClosedPanel .arena-closed-row:hover{background:#f9fbfe!important}
+  #arenaClosedPanel .arena-client-avatar{width:38px!important;height:38px!important;box-shadow:none!important}
+  #arenaClosedPanel .arena-client-avatar:after{font-size:18px!important}
+  #arenaClosedPanel .arena-closed-row .info{font-size:13px!important;font-weight:850!important;color:#1d3152!important;line-height:1.25!important}
+  #arenaClosedPanel .arena-closed-row .info small{display:block!important;margin-top:5px!important;font-size:9.5px!important;font-weight:600!important;color:#8a97aa!important}
+  #arenaClosedPanel .arena-payment-badge{justify-self:end!important;min-width:64px!important;height:24px!important;padding:0 8px!important;border-radius:7px!important;font-size:7.5px!important;letter-spacing:.35px!important;box-shadow:none!important}
+  #arenaClosedPanel .arena-closed-row .price{justify-self:end!important;font-size:14px!important;font-weight:900!important;color:#1556c0!important;white-space:nowrap!important}
+  #arenaClosedPanel .arena-closed-row:after{font-size:20px!important;color:#9ba7b8!important}
+
+  #arenaFinancePanel{gap:16px!important}
+  #arenaPayVisual{grid-template-columns:160px minmax(0,1fr)!important;gap:16px!important;padding:20px!important;min-height:204px!important}
+  .arena-donut{width:132px!important;height:132px!important}.arena-donut:after{inset:27px!important;box-shadow:inset 0 0 0 1px #edf1f6!important}
+  .arena-donut-center strong{font-size:16px!important;font-weight:900!important;color:#1c3153!important}.arena-donut-center span{font-size:9px!important;color:#909cad!important;margin-top:3px!important}
+  .arena-finance-box #payReport .paycard{grid-template-columns:10px minmax(0,1fr) auto!important;min-height:42px!important;padding:7px 0!important;border-bottom:1px solid #f0f3f7!important}
+  .arena-finance-box #payReport .paycard:before{width:7px!important;height:7px!important}.arena-finance-box #payReport .paycard span{font-size:10px!important;font-weight:800!important;color:#52617a!important}.arena-finance-box #payReport .paycard strong{font-size:12px!important;font-weight:900!important;color:#1d3152!important}
+
+  #arenaSummaryBox .summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;background:#fff!important}
+  #arenaSummaryBox .summary .stat{min-height:88px!important;padding:15px 14px!important;border-right:1px solid #edf1f6!important;border-bottom:1px solid #edf1f6!important;background:#fff!important;box-shadow:none!important}
+  #arenaSummaryBox .summary .stat:nth-child(3n){border-right:0!important}#arenaSummaryBox .summary .stat:nth-last-child(-n+2){border-bottom:0!important}
+  #arenaSummaryBox .summary .stat strong{font-size:20px!important;line-height:1.05!important;color:#17345f!important}#arenaSummaryBox .summary .stat span{margin-top:8px!important;font-size:8px!important;line-height:1.2!important;letter-spacing:.35px!important;color:#8a97aa!important}
+  #arenaSummaryBox .summary .primaryStat{background:#1556c0!important;border-radius:0!important}#arenaSummaryBox .summary .primaryStat strong,#arenaSummaryBox .summary .primaryStat span{color:#fff!important}
+  #arenaSummaryBox .arena-summary-extra.ticket strong{color:#d69200!important}#arenaSummaryBox .arena-summary-extra.open-value strong{color:#e34a4a!important}
+
+  #report>.sub.arena-products-title{margin:28px 0 10px!important;font-size:11px!important;letter-spacing:.45px!important;color:#263a5a!important}
+  #productReport{display:block!important;border:1px solid #e4eaf2!important;border-radius:14px!important;background:#fff!important;overflow:hidden!important;box-shadow:0 5px 18px rgba(25,43,74,.035)!important}
+  #productReport .row{min-height:58px!important;margin:0!important;padding:11px 16px!important;border:0!important;border-bottom:1px solid #edf1f6!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;transform:none!important}
+  #productReport .row:last-child{border-bottom:0!important}#productReport .row:hover{background:#f9fbfe!important;transform:none!important}
+  #productReport .row .info{font-size:12px!important;font-weight:800!important;color:#263a5a!important}#productReport .row .info small{margin-top:3px!important;font-size:9px!important;color:#919daf!important}#productReport .row .price{font-size:13px!important;font-weight:900!important;color:#1556c0!important}
+
+  @media (max-width:1180px){#arenaReportDesktopGrid{grid-template-columns:1fr!important}#arenaFinancePanel{grid-template-columns:1fr 1fr!important}#arenaPayVisual{grid-template-columns:130px 1fr!important}}
+}
