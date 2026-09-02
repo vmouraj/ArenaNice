@@ -99,3 +99,21 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   setTimeout(boot,300);
 })();
+
+/* Ao tocar em um dia no histórico mensal, mantém a data escolhida e mostra o descritivo daquele dia. */
+(function(){
+  function install(){
+    window.openDay=function(d){
+      const day=document.getElementById('day');
+      if(day){day.value=d;day.dataset.userChanged='1'}
+      document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+      const report=document.getElementById('report');if(report)report.classList.add('active');
+      document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));
+      const nav=document.querySelector('.nav[data-page="report"]');if(nav)nav.classList.add('active');
+      try{renderReport()}catch(e){}
+      try{window.scrollTo(0,0)}catch(e){}
+    };
+  }
+  setTimeout(install,0);
+  setTimeout(install,500);
+})();
